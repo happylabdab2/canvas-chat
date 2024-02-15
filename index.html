@@ -34,7 +34,7 @@
       <button id="clear-canvas">Clear Canvas</button>
       <div> <td id="colorControls">
         <input type="color" id="colorChangeBG" onchange="getRGBColor(this)">
-        <p>RGB:<span id="HexValue">"0, 0, 0"</span></p>
+        <td><span id="HexValue">"0, 0, 0"</span></td>
         </td>
       <td>-</td></div>
       
@@ -136,10 +136,18 @@ wss.onclose = function(event) {if (_e==="1") document.getElementById("status").i
 
 wss.onerror = function(event) {
   if (wss.readyState !== WebSocket.OPEN) {
-    alert("All changes are local.");
-  } else {
+    if (localStorage.getItem("confirmed")===null) {
+      if (confirm("turn off \"all changes are local\"?")) {
+        localStorage.setItem("confirmed", "true");
+      }
+    } 
+    if(localStorage.getItem("confirmed") !== "true") { 
+      alert("All changes are local.");
+    }
+  } 
+  else {
     console.log(event);
-    alert("An error occurred, please contact Royan. \n Error:", event);
+    alert("An error occurred, please contact Royan. \n Error: " + event.toString());
   }
 };
 
