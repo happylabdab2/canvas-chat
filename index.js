@@ -1,13 +1,14 @@
-import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
 
-const ws = new WebSocket('ws://www.host.com/path');
+const wss = new WebSocketServer({ port: 493 });
 
-ws.on('error', console.error);
+wss.on('connection', function connection(ws) {
+  ws.on('error', console.error);
 
-ws.on('open', function open() {
-  ws.send('something');
+  ws.on('message', function message(data) {
+    ws.send(data);
+  });
+
 });
 
-ws.on('message', function message(data) {
-  console.log('received: %s', data);
-});
+console.log(location.url ,'Server started on port 493');
