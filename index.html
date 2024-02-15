@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>canvas of hehe😉</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #control-bar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 15vw;
+        height: 100%;
+        background-color: #f0f0f0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+}
+
+#canvas {
+  margin-left: 100px;
+  border: 1px; solid #000000;
+}
+    </style>
+    
+  </head>
+  <body>
+
+    <div id="control-bar">
+      <p id="status" >🔴</p>
+      <button id="clear-canvas">Clear Canvas</button>
+      <div><button id="change-color">Change Color</button> <td id="colorControls">
+        <input type="color" id="colorChangeBG" onchange="getRGBColor(this)">
+        <p>RGB:<span id="HexValue">"0, 0, 0"</span></p>
+        </td>
+      <td>-</td></div>
+      
+    </div>
+
+    <canvas id="Canvas">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+
+    <script>
+      //init
+      var canvas= document.getElementById("Canvas");
+    canvas.width = window.innerWidth-20;
+      canvas.height = window.innerHeight-20;
+      var ctx = canvas.getContext("2d");
+
+// drawing
+let drawing = false;
+let x = 0;
+let y = 0;
+
+function startDrawing(e) {
+  drawing = true;
+  x = e.offsetX;
+  y = e.offsetY;
+}
+
+function draw(e) {
+  if (!drawing) return;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+  x = e.offsetX;
+  y = e.offsetY;
+}
+
+
+//event listeners
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', function(){drawing=false;var dataUrl=canvas.toDataURL();wss.send(dataUrl);});
+
+//btns -- ctrols
+document.getElementById('clear-canvas').addEventListener('click', function() {
+  if (confirm('Are you sure you want to clear the canvas?'))
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+let color = 'black';
+document.getElementById('change-color').addEventListener('click', function() {
+  color == _color;
+  ctx.strokeStyle = color;
+});
+
+//color controls
+
+let colorChangeBG = document.getElementById("colorChangeBG");
+let HexValue =  document.getElementById("HexValue");
+
+function hexTorgb(hex) {
+  return ['0x' + hex[1] + hex[2] | 0, '0x' + hex[3] + hex[4] | 0, '0x' + hex[5] + hex[6] | 0];
+};
+
+colorChangeBG.addEventListener('input', function() {
+  let rgbV = hexTorgb(this.value);
+  HexValue.innerHTML = 'rgb(' + rgbV.join(',') + ')';
+  ctx.strokeStyle = 'rgb(' + rgbV.join(',') + ')';
+});
+
+var wss = new WebSocket("wss://canvas.hehe.com:8054");
+
+wss.onmessage = function(event) {
+  var img = new Image();
+  img.onload = function() {
+    ctx.drawImage(img, 0, 0);
+  };
+  img.src = event.data;
+};
+wss.onopen = function(event) {document.getElementById("status").innerHTML = "🟢";var _e="1"};
+
+wss.onclose = function(event) {if (_e==="1") document.getElementById("status").innerHTML = "🔴";}
+wss.onerror = function(event) {
+  if (wss.readyState !== WebSocket.OPEN) {
+    alert("All changes are local.");
+  } else {
+    alert("An error occurred, please contact Royan.");
+  }
+};
+//local storage save
+window.onbeforeunload = function() {localStorage.setItem("canvas", canvas.toDataURL()); wss.close();}
+window.onload = function() {
+  var dataUrl = localStorage.getItem("canvas");
+  if (dataUrl) {
+    var img = new Image();
+    img.onload = function() {
+      ctx.drawImage(img, 0, 0);
+    };
+    img.src = dataUrl;
+  }
+}
+    </script>
+  </body>
+</html>
