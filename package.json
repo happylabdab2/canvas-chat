@@ -1,0 +1,30 @@
+{
+  "name": "canvas-chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"starting it\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/happylabdab2/canvas-chat.git"
+  },
+  "keywords": [
+    "chat",
+    "canvas",
+    "drawing"
+  ],
+  "author": "Royan Xu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/happylabdab2/canvas-chat/issues"
+  },
+  "homepage": "https://github.com/happylabdab2/canvas-chat#readme",
+  "dependencies": {
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.10"
+  }
+}
